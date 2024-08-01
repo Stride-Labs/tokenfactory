@@ -17,7 +17,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	legacy.RegisterAminoMsg(cdc, &MsgChangeAdmin{}, "osmosis/tokenfactory/change-admin")
 	legacy.RegisterAminoMsg(cdc, &MsgSetDenomMetadata{}, "osmosis/tokenfactory/set-denom-metadata")
 	legacy.RegisterAminoMsg(cdc, &MsgSetBeforeSendHook{}, "osmosis/tokenfactory/set-bef-send-hook")
-	legacy.RegisterAminoMsg(cdc, &MsgForceTransfer{}, "osmosis/tokenfactory/force-transfer")
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -29,7 +28,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgChangeAdmin{},
 		&MsgSetDenomMetadata{},
 		&MsgSetBeforeSendHook{},
-		&MsgForceTransfer{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

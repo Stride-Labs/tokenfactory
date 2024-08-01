@@ -1,5 +1,13 @@
 # Token Factory
 
+The tokenfactory module was originally developed by the Osmosis team. This fork has been modified to enable easier integration with Hyperlane:
+
+- No need for a custom x/bank module (no BeforeSendHooks)
+- Admins can't force transfer or burn tokens from other accounts
+  - the original behavior can mess up IBC transfer invariants (burn escrowed tokens)
+
+The above functionalities are not used by Hyperlane and thus removed.
+
 The tokenfactory module allows any account to create a new token with
 the name `factory/{creator address}/{subdenom}`. Because tokens are
 namespaced by creator address, this allows token minting to be
@@ -9,8 +17,8 @@ created denom. Once a denom is created, the original creator is given
 "admin" privileges over the asset. This allows them to:
 
 - Mint their denom to any account
-- Burn their denom from any account
-- Create a transfer of their denom between any two accounts
+- Burn their denom from any account (note: this functionality is no longer available on this fork)
+- Create a transfer of their denom between any two accounts (note: this functionality is no longer available on this fork)
 - Change the admin. In the future, more admin capabilities may be added. Admins
   can choose to share admin privileges with other accounts using the authz
   module. The `ChangeAdmin` functionality, allows changing the master admin

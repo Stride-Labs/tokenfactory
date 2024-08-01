@@ -115,6 +115,10 @@ func (m MsgBurn) ValidateBasic() error {
 		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address (%s)", err)
 	}
 
+	if m.BurnFromAddress != "" {
+		return ErrBurnFromOtherAccount
+	}
+
 	if !m.Amount.IsValid() || m.Amount.Amount.Equal(osmomath.ZeroInt()) {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, m.Amount.String())
 	}

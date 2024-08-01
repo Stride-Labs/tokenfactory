@@ -91,9 +91,11 @@ func (server msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.
 		return nil, types.ErrUnauthorized
 	}
 
-	if msg.BurnFromAddress == "" {
-		msg.BurnFromAddress = msg.Sender
+	if msg.BurnFromAddress != "" {
+		return nil, types.ErrBurnFromOtherAccount
 	}
+
+	msg.BurnFromAddress = msg.Sender
 
 	accountI := server.Keeper.accountKeeper.GetAccount(ctx, sdk.AccAddress(msg.BurnFromAddress))
 	_, ok := accountI.(sdk.ModuleAccountI)

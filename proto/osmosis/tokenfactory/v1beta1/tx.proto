@@ -18,8 +18,6 @@ service Msg {
   rpc ChangeAdmin(MsgChangeAdmin) returns (MsgChangeAdminResponse);
   rpc SetDenomMetadata(MsgSetDenomMetadata)
       returns (MsgSetDenomMetadataResponse);
-  rpc SetBeforeSendHook(MsgSetBeforeSendHook)
-      returns (MsgSetBeforeSendHookResponse);
 }
 
 // MsgCreateDenom defines the message structure for the CreateDenom gRPC service
@@ -103,24 +101,6 @@ message MsgChangeAdmin {
 // MsgChangeAdminResponse defines the response structure for an executed
 // MsgChangeAdmin message.
 message MsgChangeAdminResponse {}
-
-// MsgSetBeforeSendHook is the sdk.Msg type for allowing an admin account to
-// assign a CosmWasm contract to call with a BeforeSend hook
-message MsgSetBeforeSendHook {
-  option (amino.name) = "osmosis/tokenfactory/set-bef-send-hook";
-  option (cosmos.msg.v1.signer) = "sender";
-
-  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
-  string denom = 2 [ (gogoproto.moretags) = "yaml:\"denom\"" ];
-  string cosmwasm_address = 3 [
-    (gogoproto.moretags) = "yaml:\"cosmwasm_address\"",
-    (amino.dont_omitempty) = true
-  ];
-}
-
-// MsgSetBeforeSendHookResponse defines the response structure for an executed
-// MsgSetBeforeSendHook message.
-message MsgSetBeforeSendHookResponse {}
 
 // MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
 // the denom's bank metadata

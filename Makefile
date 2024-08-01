@@ -10,8 +10,7 @@ SIMAPP = ./app
 
 # for dockerized protobuf tools
 DOCKER := $(shell which docker)
-BUF_IMAGE=bufbuild/buf@sha256:3cb1f8a4b48bd5ad8f09168f10f607ddc318af202f5c057d52a45216793d85e5 #v1.4.0
-DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(BUF_IMAGE)
+DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf:1.7.0
 HTTPS_GIT := https://github.com/CosmWasm/token-factory.git
 
 export GO111MODULE = on
@@ -165,26 +164,24 @@ format: format-tools
 ###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
-PROTO_BUILDER_IMAGE=tendermintdev/sdk-proto-gen:v0.7
-PROTO_FORMATTER_IMAGE=tendermintdev/docker-build-proto@sha256:aabcfe2fc19c31c0f198d4cd26393f5e5ca9502d7ea3feafbfe972448fee7cae
 
-proto-all: proto-format proto-lint proto-gen format
+containerProtoVer=0.14.0
+containerProtoImage=ghcr.io/cosmos/proto-builder:$(containerProtoVer)
+
+proto-all: proto-format proto-gen
 
 proto-gen:
 	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(PROTO_BUILDER_IMAGE) sh ./scripts/protocgen.sh
+	@$(DOCKER) run --user $(id -u):$(id -g) --rm -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) \
+		sh ./scripts/protocgen.sh; 
 
 proto-format:
 	@echo "Formatting Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace \
-	--workdir /workspace $(PROTO_FORMATTER_IMAGE) \
-	find ./ -name *.proto -exec clang-format -i {} \;
+	@$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
+		find ./proto -name "*.proto" -exec clang-format -i {} \;  
 
 proto-swagger-gen:
 	@./scripts/protoc-swagger-gen.sh
-
-proto-lint:
-	@$(DOCKER_BUF) lint --error-format=json
 
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=main
